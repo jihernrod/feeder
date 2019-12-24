@@ -1,4 +1,4 @@
-package matxu.framework.agregation.feeder.config;
+package matxu.framework.agregation.feeder.config.db;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Configuration
 public class MongoDbConfiguration {
 
-
     public @Bean
     MongoClient mongoClient() {
+
         MongoClientURI uri = new MongoClientURI(
                 "mongodb+srv://jihernandez:mongodb@cluster0-srxes.mongodb.net/test?retryWrites=true&w=majority");
 

@@ -29,7 +29,7 @@ import java.util.Map;
 @ComponentScan("matxu.framework.agregation.feeder.config.db")
 @ComponentScan("matxu.framework.agregation.feeder.config.listener")
 @EnableBatchProcessing
-public class ScenaryBatchConfiguration {
+public class OtherScenaryBatchConfiguration {
 
     public Map<String, JobParameter> NOT_SET =null;
 
@@ -44,7 +44,7 @@ public class ScenaryBatchConfiguration {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<Scenary> reader_1(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
+    public FlatFileItemReader<Scenary> reader(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
         return new FlatFileItemReaderBuilder<Scenary>()
                 .name("scenaryItemReader")
                 .resource(new ClassPathResource("scenary.csv"))
@@ -58,13 +58,13 @@ public class ScenaryBatchConfiguration {
 
     @Bean
     @StepScope
-    public ScenaryItemProcessor processor_1(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
+    public ScenaryItemProcessor processor(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
         return new ScenaryItemProcessor();
     }
 
     @Bean
     @StepScope
-    public MongoItemWriter<Scenary> writer_1(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
+    public MongoItemWriter<Scenary> writer(@Value("#{jobParameters}")  Map<String, JobParameter> jobParameters) {
         MongoItemWriter<Scenary> writer = new MongoItemWriter<Scenary>();
         writer.setTemplate(mongoTemplate);
         writer.setCollection("scenary");
@@ -73,23 +73,23 @@ public class ScenaryBatchConfiguration {
     // end::readerwriterprocessor[]
 
     // tag::jobstep[]
-    @Bean(name="batch_2")
-    public Job batch_2(JobCompletionNotificationListener listener, Step loadScenary_2) {
-        return jobBuilderFactory.get("batch_2")
+    @Bean(name="batch_1")
+    public Job batch_1(JobCompletionNotificationListener listener, Step loadScenary_1) {
+        return jobBuilderFactory.get("batch_1")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)
-                .flow(loadScenary_2)
+                .flow(loadScenary_1)
                 .end()
                 .build();
     }
 
-    @Bean
-    public Step loadScenary_2(MongoItemWriter<Scenary> writer) {
-        return stepBuilderFactory.get("loadScenary_2")
+    @Bean(name="loadScenary_1")
+    public Step loadScenary_1(MongoItemWriter<Scenary> writer) {
+        return stepBuilderFactory.get("loadScenary_1")
                 .<Scenary, Scenary> chunk(10)
-                .reader(reader_1(NOT_SET))
-                .processor(processor_1(NOT_SET))
-                .writer(writer_1(NOT_SET))
+                .reader(reader(NOT_SET))
+                .processor(processor(NOT_SET))
+                .writer(writer(NOT_SET))
                 .build();
     }
     // end::jobstep[]
